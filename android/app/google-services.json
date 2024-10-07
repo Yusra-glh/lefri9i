@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "319877239326",
+    "project_id": "spr01-5bee0",
+    "storage_bucket": "spr01-5bee0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319877239326:android:6bc7e4bc0e9409e28e940f",
+        "android_client_info": {
+          "package_name": "com.spr.clubafricain"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC75nH-REdkONYXjoyzSfgltN3Ci4lvtYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
