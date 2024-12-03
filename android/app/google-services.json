@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "864604067490",
+    "project_id": "lifriqi-7a5dc",
+    "storage_bucket": "lifriqi-7a5dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864604067490:android:5be990a8888370a2ea69fb",
+        "android_client_info": {
+          "package_name": "com.spr.clubafricain"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCja3dk97NMSFCt5dD7joD8kcnBR5JiOzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
