@@ -48,10 +48,10 @@ class NotificationProvider with ChangeNotifier {
         print('Error processing data: $e');
       }
     }, onError: (error) {
-      print('WebSocket error: $error');
+      // print('WebSocket error: $error');
       _handleConnectionClose(email);
     }, onDone: () {
-      print('WebSocket closed');
+      // print('WebSocket closed');
       _handleConnectionClose(email);
     });
 

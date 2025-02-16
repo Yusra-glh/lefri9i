@@ -12,9 +12,9 @@ class WebSocketService {
 
   void listen(void Function(dynamic message) onMessage) {
     channel.stream.listen(onMessage, onError: (error) {
-      print('WebSocket error: $error');
+      //print('WebSocket error: $error');
     }, onDone: () {
-      print('WebSocket connection closed');
+      // print('WebSocket connection closed');
     });
   }
 

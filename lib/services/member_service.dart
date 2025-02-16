@@ -36,9 +36,9 @@ class MemberService {
       if (response.statusCode == 200) {
         final responseData = response.data;
         final user = User.fromJson(responseData);
-        log(
-          "current user--------------------$responseData",
-        );
+        // log(
+        //   "current user--------------------$responseData",
+        // );
         // Save user information to shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setInt('userId', user.id);

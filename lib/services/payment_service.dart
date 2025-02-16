@@ -35,7 +35,8 @@ class PaymentService {
           headers: {'Authorization': 'Bearer $accessToken'},
         ),
       );
-
+      log("payment response ---------------- $response");
+      log("payment response.statusCode ---------------- ${response.statusCode}");
       // Handle the response
       if (response.statusCode == 200) {
         final List<Payment> payments = (response.data as List)

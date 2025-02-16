@@ -27,16 +27,8 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
   @override
   void initState() {
     super.initState();
-    print("this category is ${widget.categories[0].id}");
     _isExpanded = widget.isExpanded;
     _categories = widget.categories;
-    if (widget.editable == false) {
-      for (var category in _categories) {
-        for (var kpi in category.kpis) {
-          kpi.value = kpi.value;
-        }
-      }
-    }
   }
 
   @override
@@ -67,30 +59,16 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
                   fontSize: MediaQuery.of(context).size.width * 0.042,
                 ),
               ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: Size(
-                    MediaQuery.of(context).size.width * 0.052,
-                    MediaQuery.of(context).size.height * 0.024,
-                  ),
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.005),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  overlayColor: Colors.grey.withOpacity(0.5),
+              IconButton(
+                icon: Icon(
+                  _isExpanded ? Icons.expand_less : Icons.expand_more,
+                  color: Colors.black,
                 ),
                 onPressed: () {
                   setState(() {
                     _isExpanded = !_isExpanded;
                   });
                 },
-                child: Text(
-                  _isExpanded ? "–" : "+",
-                  style: GoogleFonts.montserrat(
-                    color: Colors.black,
-                    fontWeight: _isExpanded ? FontWeight.w700 : FontWeight.w500,
-                    fontSize: MediaQuery.of(context).size.width * 0.042,
-                  ),
-                ),
               ),
             ],
           ),
@@ -121,16 +99,47 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
                                               0.036,
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      _buildRadioButton(kpi, 1),
-                                      _buildRadioButton(kpi, 2),
-                                      _buildRadioButton(kpi, 3),
-                                    ],
-                                  ),
+                                  widget.editable
+                                      ? Row(
+                                          children: [
+                                            _buildRadioButton(kpi, 1),
+                                            _buildRadioButton(kpi, 2),
+                                            _buildRadioButton(kpi, 3),
+                                          ],
+                                        )
+                                      : kpi.value != null
+                                          ? Text(
+                                              "Selected: ${kpi.value ?? ""}",
+                                              style: GoogleFonts.montserrat(
+                                                color: Colors.grey[700],
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.031,
+                                              ),
+                                            )
+                                          : const SizedBox(),
                                 ],
                               ),
-                              _buildCommentField(kpi),
+                              widget.editable
+                                  ? _buildCommentField(kpi)
+                                  : Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.012),
+                                      child: Text(
+                                        kpi.comment ?? 'No comment',
+                                        style: GoogleFonts.montserrat(
+                                          color: Colors.grey[700],
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.031,
+                                        ),
+                                      ),
+                                    ),
                               SizedBox(
                                   height: MediaQuery.of(context).size.height *
                                       0.025),
@@ -154,13 +163,13 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
           Radio<int>(
             value: value,
             groupValue: kpi.value,
-            onChanged: (value) {
-              if (widget.editable) {
-                setState(() {
-                  kpi.value = value;
-                });
-              }
-            },
+            onChanged: widget.editable
+                ? (value) {
+                    setState(() {
+                      kpi.value = value;
+                    });
+                  }
+                : null,
           ),
           Text(
             value.toString(),
@@ -179,8 +188,7 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
       padding: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.012),
       child: TextFormField(
-        initialValue:
-            kpi.comment ?? '', // Handle null case by providing default value
+        initialValue: kpi.comment ?? '',
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
