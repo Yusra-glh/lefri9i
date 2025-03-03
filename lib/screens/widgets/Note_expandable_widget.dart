@@ -79,24 +79,19 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...category.kpis.map((kpi) => Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.012),
+                          padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.012),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     kpi.kpiType,
                                     style: GoogleFonts.montserrat(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.036,
+                                      fontSize: MediaQuery.of(context).size.width * 0.036,
                                     ),
                                   ),
                                   widget.editable
@@ -108,15 +103,19 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
                                           ],
                                         )
                                       : kpi.value != null
-                                          ? Text(
-                                              "Selected: ${kpi.value ?? ""}",
+                                          ? /*Text(
+                                              "Selectionné: ${kpi.value ?? ""}",
                                               style: GoogleFonts.montserrat(
                                                 color: Colors.grey[700],
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.031,
+                                                fontSize: MediaQuery.of(context).size.width * 0.031,
                                               ),
+                                            )*/
+                                            Row(
+                                              children: [
+                                                _buildRadioButton(kpi, 1),
+                                                _buildRadioButton(kpi, 2),
+                                                _buildRadioButton(kpi, 3),
+                                              ],
                                             )
                                           : const SizedBox(),
                                 ],
@@ -124,25 +123,17 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
                               widget.editable
                                   ? _buildCommentField(kpi)
                                   : Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.012),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.012),
                                       child: Text(
-                                        kpi.comment ?? 'No comment',
+                                        kpi.comment ?? '',
                                         style: GoogleFonts.montserrat(
                                           color: Colors.grey[700],
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.031,
+                                          fontSize: MediaQuery.of(context).size.width * 0.031,
                                         ),
                                       ),
                                     ),
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.025),
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.025),
                             ],
                           ),
                         )),
@@ -185,8 +176,7 @@ class _NoteExpandableSectionState extends State<NoteExpandableSection> {
 
   Widget _buildCommentField(KPI kpi) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.012),
+      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.012),
       child: TextFormField(
         initialValue: kpi.comment ?? '',
         decoration: InputDecoration(

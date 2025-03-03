@@ -128,7 +128,7 @@ class PushNotificationService {
         FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
           log("Notification opened from background: ${message.data}");
           AndroidNotification? android = message.notification?.android;
-          showNotification(message.data, android, true);
+          showNotification(message.notification, android, true, message.data);
         });
       } else {
         log("Notifications disabled: Proceeding without FCM setup");
@@ -171,7 +171,7 @@ class PushNotificationService {
       if (message.notification != null) {
         log("Foreground notification data received: $message");
         AndroidNotification? android = message.notification?.android;
-        showNotification(message.data, android, true);
+        showNotification(message.notification, android, true, message.data);
       }
     }).onError((error) {
       log("Error in notification listener: $error");
@@ -179,13 +179,13 @@ class PushNotificationService {
   }
 
   /// Show local notification
-  void showNotification(Map<String, dynamic> notification,
-      AndroidNotification? android, bool isBackground) {
-    log("Displaying notification: ${notification['message']}");
+  void showNotification(RemoteNotification? notification,
+      AndroidNotification? android, bool isBackground, Map<String, dynamic> notif) {
+    
     flutterLocalNotificationsPlugin.show(
       notification.hashCode,
-      "New Notification!",
-      notification['message'] ?? "You have a new event",
+     notification?.title ?? "New Event",
+      notification?.body ?? "You have a new event",
       NotificationDetails(
           android: AndroidNotificationDetails(
             channel!.id,
@@ -198,7 +198,7 @@ class PushNotificationService {
               presentBadge: true,
               presentSound: true,
               presentBanner: true)),
-      payload: notification["id"],
+      payload: notif["id"],
     );
   }
 

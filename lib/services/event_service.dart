@@ -39,6 +39,34 @@ class EventService {
       throw Exception('Failed to load events: $e');
     }
   }
+  Future<List<Event>> getAdherantAllEvents() async {
+    const url = '$baseUrl/evenement/getAllActivitesByAdherent';
+    try {
+      String? accessToken = await getAccessTokenFromStorage();
+      if (accessToken == null) {
+        throw Exception('Access token not available');
+      }
+
+      Response response = await _dio.get(
+        url,
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        List<Event> events = (response.data as List)
+            .map((json) => Event.fromJson(json))
+            .toList();
+        return events;
+      } else {
+        throw Exception('Failed to load events');
+      }
+    } catch (e) {
+      throw Exception('Failed to load events: $e');
+    }
+  }
+
 
   Future<List<Event>> getCoachEvents() async {
     const url = '$baseUrl/evenement/getEvenementstByCoach';
@@ -203,6 +231,36 @@ class EventService {
     } catch (e) {
       print('Failed to update test data: $e');
       throw e;
+    }
+  }
+
+  Future<void> toggleParticipation(int testId) async {
+    final url = '$baseUrl/evenement/interested/$testId';
+
+    try {
+      String? accessToken = await getAccessTokenFromStorage();
+      if (accessToken == null) {
+        throw Exception('Access token not available');
+      }
+
+      Response response = await Dio().post(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print('Test participation updated successfully');
+      } else {
+        throw Exception('Failed to update test participation: ${response.statusCode} ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Failed to update test participation: $e');
+      rethrow;
     }
   }
 }

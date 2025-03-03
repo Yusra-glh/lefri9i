@@ -347,10 +347,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text('Votre compte est bloqué. Contactez un manager.')),
             );
           } else {
-            // ignore: use_build_context_synchronously
+           final errorMessage = response.data['message'] ?? 'Unknwon error';
+
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Email ou mot de passe incorrecte.')),
+              SnackBar(content: Text(errorMessage)),
             );
           }
 

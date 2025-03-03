@@ -28,8 +28,7 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with TickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   final AuthService _authService = AuthService();
   final PaymentService _paymentService = PaymentService();
 
@@ -54,6 +53,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   late TextEditingController _adresseController;
   late TextEditingController _nationaliteController;
   late TextEditingController _niveauScolaireController;
+  late TextEditingController _nomParent;
+  late TextEditingController _prenomParent;
+  late TextEditingController _addressParent;
+  late TextEditingController _telephoneParent;
+  late TextEditingController _emailParent;
 
   @override
   void initState() {
@@ -85,6 +89,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     _dateNaissanceController = TextEditingController();
     _niveauScolaireController = TextEditingController();
     _equipeController = TextEditingController();
+    _nomParent = TextEditingController();
+    _prenomParent = TextEditingController();
+    _addressParent = TextEditingController();
+    _telephoneParent = TextEditingController();
+    _emailParent = TextEditingController();
   }
 
   Future<void> _fetchUserData() async {
@@ -113,18 +122,17 @@ class _ProfileScreenState extends State<ProfileScreen>
     _firstnameController.text = user.firstname;
     _lastnameController.text = user.lastname;
     _emailController.text = user.email;
-    _telephoneController.text =
-        user.telephone ?? 'Ajouter votre numéro de téléphone';
-    _dateNaissanceController.text =
-        user.dateNaissance ?? 'Ajouter votre date de naissance';
-    _equipeController.text = (user.equipes?.isNotEmpty == true
-        ? user.equipes![0].nom
-        : 'Non affecté à une équipe')!;
+    _telephoneController.text = user.telephone ?? 'Ajouter votre numéro de téléphone';
+    _dateNaissanceController.text = user.dateNaissance ?? 'Ajouter votre date de naissance';
+    _equipeController.text = (user.equipes?.isNotEmpty == true ? user.equipes![0].nom : 'Non affecté à une équipe')!;
     _adresseController.text = user.adresse ?? 'Ajouter votre adresse';
-    _nationaliteController.text =
-        user.nationalite ?? 'Ajouter votre nationalité';
-    _niveauScolaireController.text =
-        user.niveauScolaire ?? 'Ajouter votre niveau scolaire';
+    _nationaliteController.text = user.nationalite ?? 'Ajouter votre nationalité';
+    _niveauScolaireController.text = user.niveauScolaire ?? 'Ajouter votre niveau scolaire';
+    _nomParent.text = user.informationParent?['nomParent'] ?? '-';
+    _prenomParent.text = user.informationParent?['prenomParent'] ?? '-';
+    _addressParent.text = user.informationParent?['addressParent'] ?? '-';
+    _telephoneParent.text = user.informationParent?['telephoneParent'] ?? '-';
+    _emailParent.text = user.informationParent?['emailParent'] ?? '-';
   }
 
   @override
@@ -166,8 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   login(String email, String password) async {
-    final notifProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
+    final notifProvider = Provider.of<NotificationProvider>(context, listen: false);
     final fcmToken = await notifProvider.getFcmToken();
     // // Clear previous notifications
     // Provider.of<NotificationProvider>(context, listen: false)
@@ -194,8 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       }
     } else if (response.statusCode == 401) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Votre compte est bloqué. Contactez un manager.')),
+        const SnackBar(content: Text('Votre compte est bloqué. Contactez un manager.')),
       );
     } else {
       // ignore: use_build_context_synchronously
@@ -335,7 +341,9 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
           ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.05,
+          ),
           GestureDetector(
             onTap: () {
               _authService.logout();
@@ -362,149 +370,132 @@ class _ProfileScreenState extends State<ProfileScreen>
               color: black,
             ))
           : Center(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.width * 0.27,
-                    width: MediaQuery.of(context).size.width * 0.27,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(500),
-                      child: CachedNetworkImage(
-                        imageUrl: user?.photo ??
-                            'https://ui-avatars.com/api/?name=${user?.firstname}+${user?.lastname}&uppercase=true&color=ffffff&background=000000&rounded=true&size=150',
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(color: black),
-                        //errorWidget: (context, url, error) => Icon(Icons.error),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.012),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Bonjour, ${user?.firstname} ",
-                        style: GoogleFonts.raleway(
-                          color: black,
-                          fontWeight: FontWeight.w600,
-                          fontSize:
-                              MediaQuery.of(context).size.width * 0.052,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.width * 0.27,
+                      width: MediaQuery.of(context).size.width * 0.27,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(500),
+                        child: CachedNetworkImage(
+                          imageUrl: user?.photo ??
+                              'https://ui-avatars.com/api/?name=${user?.firstname}+${user?.lastname}&uppercase=true&color=ffffff&background=000000&rounded=true&size=150',
+                          placeholder: (context, url) => const CircularProgressIndicator(color: black),
+                          //errorWidget: (context, url, error) => Icon(Icons.error),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.036),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 0,
-                      left: MediaQuery.of(context).size.width * 0.052,
-                      right: MediaQuery.of(context).size.width * 0.052,
-                      bottom: 0,
                     ),
-                    child: Column(
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.012),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: 0,
-                            left: MediaQuery.of(context).size.width * 0.027,
-                            right:
-                                MediaQuery.of(context).size.width * 0.027,
-                            bottom: 0,
-                          ),
-                          padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.01,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(35),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: TabBar(
-                            controller: tabController,
-                            // this is to remove the accent color when clicking on the tab
-                            overlayColor:
-                                WidgetStateProperty.all(Colors.transparent),
-                            onTap: _onTabTapped,
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(35),
-                              color: Colors.black,
-                            ),
-                            indicatorColor: Colors.black,
-                            dividerColor: Colors.transparent,
-                            tabs: [
-                              EventTabItemIcon(
-                                icon: SvgPicture.asset(
-                                  "assets/icones/info.svg",
-                                  color: Colors.grey,
-                                  width: MediaQuery.of(context).size.width *
-                                      0.07,
-                                ),
-                                isSelected: selectedIndex == 0,
-                              ),
-                              EventTabItemIcon(
-                                icon: SvgPicture.asset(
-                                  "assets/icones/medical.svg",
-                                  color: Colors.grey,
-                                  width: MediaQuery.of(context).size.width *
-                                      0.07,
-                                ),
-                                isSelected: selectedIndex == 1,
-                              ),
-                              EventTabItemIcon(
-                                icon: SvgPicture.asset(
-                                  "assets/icones/money.svg",
-                                  color: Colors.grey,
-                                  width: MediaQuery.of(context).size.width *
-                                      0.07,
-                                ),
-                                isSelected: selectedIndex == 2,
-                              ),
-                              EventTabItemIcon(
-                                icon: SvgPicture.asset(
-                                  "assets/icones/note.svg",
-                                  color: Colors.grey,
-                                  width: MediaQuery.of(context).size.width *
-                                      0.07,
-                                ),
-                                isSelected: selectedIndex == 3,
-                              ),
-                            ],
+                        Text(
+                          "Bonjour, ${user?.firstname} ",
+                          style: GoogleFonts.raleway(
+                            color: black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: MediaQuery.of(context).size.width * 0.052,
                           ),
                         ),
-                        SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 0.02),
-                        SingleChildScrollView(
-                          child: SizedBox(
-                            width: double.infinity,
-                            height:
-                                MediaQuery.of(context).size.height * 0.5,
-                            child: TabBarView(
+                      ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.036),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 0,
+                        left: MediaQuery.of(context).size.width * 0.052,
+                        right: MediaQuery.of(context).size.width * 0.052,
+                        bottom: 0,
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 0,
+                              left: MediaQuery.of(context).size.width * 0.027,
+                              right: MediaQuery.of(context).size.width * 0.027,
+                              bottom: 0,
+                            ),
+                            padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(35),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: TabBar(
                               controller: tabController,
-                              children: [
-                                buildGeneralInfo(context),
-                                buildMedicalInfo(context),
-                                buildPaymentInfo(context),
-                                buildInfoSportiveInfo(context),
+                              // this is to remove the accent color when clicking on the tab
+                              overlayColor: WidgetStateProperty.all(Colors.transparent),
+                              onTap: _onTabTapped,
+                              indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(35),
+                                color: Colors.black,
+                              ),
+                              indicatorColor: Colors.black,
+                              dividerColor: Colors.transparent,
+                              tabs: [
+                                EventTabItemIcon(
+                                  icon: SvgPicture.asset(
+                                    "assets/icones/info.svg",
+                                    color: Colors.grey,
+                                    width: MediaQuery.of(context).size.width * 0.07,
+                                  ),
+                                  isSelected: selectedIndex == 0,
+                                ),
+                                EventTabItemIcon(
+                                  icon: SvgPicture.asset(
+                                    "assets/icones/medical.svg",
+                                    color: Colors.grey,
+                                    width: MediaQuery.of(context).size.width * 0.07,
+                                  ),
+                                  isSelected: selectedIndex == 1,
+                                ),
+                                EventTabItemIcon(
+                                  icon: SvgPicture.asset(
+                                    "assets/icones/money.svg",
+                                    color: Colors.grey,
+                                    width: MediaQuery.of(context).size.width * 0.07,
+                                  ),
+                                  isSelected: selectedIndex == 2,
+                                ),
+                                EventTabItemIcon(
+                                  icon: SvgPicture.asset(
+                                    "assets/icones/note.svg",
+                                    color: Colors.grey,
+                                    width: MediaQuery.of(context).size.width * 0.07,
+                                  ),
+                                  isSelected: selectedIndex == 3,
+                                ),
                               ],
                             ),
                           ),
-                        ),
-
-
-                      ],
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                          SingleChildScrollView(
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              child: TabBarView(
+                                controller: tabController,
+                                children: [
+                                  buildGeneralInfo(context),
+                                  buildMedicalInfo(context),
+                                  buildPaymentInfo(context),
+                                  buildInfoSportiveInfo(context),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-
-
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
     );
   }
 
@@ -590,8 +581,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                 ),
                 Column(
-                  children: user?.informationsSportives?.performances
-                          ?.map((test) {
+                  children: user?.informationsSportives?.performances?.map((test) {
                         return GestureDetector(
                           onTap: () {
                             if (test.testId != null) {
@@ -611,8 +601,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 SvgPicture.asset(
                                   "assets/icones/note.svg",
                                   color: Colors.grey,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.07,
+                                  width: MediaQuery.of(context).size.width * 0.07,
                                 ),
                                 const SizedBox(
                                   width: 8,
@@ -622,9 +611,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   style: GoogleFonts.montserrat(
                                     color: Colors.black87,
                                     fontWeight: FontWeight.w600,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
+                                    fontSize: MediaQuery.of(context).size.width * 0.04,
                                   ),
                                 ),
                               ],
@@ -682,20 +669,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w600,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0385,
+                            fontSize: MediaQuery.of(context).size.width * 0.0385,
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.006),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.006),
                         if (user?.conditionMedicale?.isNotEmpty ?? false)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.006,
+                                  vertical: MediaQuery.of(context).size.height * 0.006,
                                 ),
                                 child: Text.rich(
                                   TextSpan(
@@ -705,10 +689,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: grey,
                                           fontWeight: FontWeight.w300,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.0315,
+                                          fontSize: MediaQuery.of(context).size.width * 0.0315,
                                         ),
                                       ),
                                       TextSpan(
@@ -716,10 +697,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: black,
                                           fontWeight: FontWeight.w400,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.036,
+                                          fontSize: MediaQuery.of(context).size.width * 0.036,
                                         ),
                                       ),
                                     ],
@@ -734,8 +712,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             style: GoogleFonts.montserrat(
                               color: grey,
                               fontWeight: FontWeight.w300,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.0315,
+                              fontSize: MediaQuery.of(context).size.width * 0.0315,
                             ),
                           ),
                       ],
@@ -769,20 +746,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w600,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0385,
+                            fontSize: MediaQuery.of(context).size.width * 0.0385,
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.006),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.006),
                         if (user?.allergies?.isNotEmpty ?? false)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: user!.allergies!.map((allergy) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.006,
+                                  vertical: MediaQuery.of(context).size.height * 0.006,
                                 ),
                                 child: Text.rich(
                                   TextSpan(
@@ -792,10 +766,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: grey,
                                           fontWeight: FontWeight.w300,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.0315,
+                                          fontSize: MediaQuery.of(context).size.width * 0.0315,
                                         ),
                                       ),
                                       TextSpan(
@@ -803,10 +774,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: black,
                                           fontWeight: FontWeight.w400,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.036,
+                                          fontSize: MediaQuery.of(context).size.width * 0.036,
                                         ),
                                       ),
                                     ],
@@ -821,8 +789,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             style: GoogleFonts.montserrat(
                               color: grey,
                               fontWeight: FontWeight.w300,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.0315,
+                              fontSize: MediaQuery.of(context).size.width * 0.0315,
                             ),
                           ),
                       ],
@@ -856,20 +823,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w600,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0385,
+                            fontSize: MediaQuery.of(context).size.width * 0.0385,
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.006),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.006),
                         if (user?.medicamentActuel?.isNotEmpty ?? false)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: user!.medicamentActuel!.map((medicine) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.006,
+                                  vertical: MediaQuery.of(context).size.height * 0.006,
                                 ),
                                 child: Text.rich(
                                   TextSpan(
@@ -879,10 +843,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: grey,
                                           fontWeight: FontWeight.w300,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.0315,
+                                          fontSize: MediaQuery.of(context).size.width * 0.0315,
                                         ),
                                       ),
                                       TextSpan(
@@ -890,10 +851,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: black,
                                           fontWeight: FontWeight.w400,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.036,
+                                          fontSize: MediaQuery.of(context).size.width * 0.036,
                                         ),
                                       ),
                                     ],
@@ -908,8 +866,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             style: GoogleFonts.montserrat(
                               color: grey,
                               fontWeight: FontWeight.w300,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.0315,
+                              fontSize: MediaQuery.of(context).size.width * 0.0315,
                             ),
                           ),
                       ],
@@ -943,20 +900,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w600,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0385,
+                            fontSize: MediaQuery.of(context).size.width * 0.0385,
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.006),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.006),
                         if (user?.medicamentPasses?.isNotEmpty ?? false)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: user!.medicamentPasses!.map((medicine) {
                               return Padding(
                                 padding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.006,
+                                  vertical: MediaQuery.of(context).size.height * 0.006,
                                 ),
                                 child: Text.rich(
                                   TextSpan(
@@ -966,10 +920,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: grey,
                                           fontWeight: FontWeight.w300,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.0315,
+                                          fontSize: MediaQuery.of(context).size.width * 0.0315,
                                         ),
                                       ),
                                       TextSpan(
@@ -977,10 +928,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         style: GoogleFonts.montserrat(
                                           color: black,
                                           fontWeight: FontWeight.w400,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.036,
+                                          fontSize: MediaQuery.of(context).size.width * 0.036,
                                         ),
                                       ),
                                     ],
@@ -995,8 +943,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             style: GoogleFonts.montserrat(
                               color: grey,
                               fontWeight: FontWeight.w300,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.0315,
+                              fontSize: MediaQuery.of(context).size.width * 0.0315,
                             ),
                           ),
                       ],
@@ -1035,7 +982,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
           ],
         ),
       ),
@@ -1288,8 +1235,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1314,8 +1260,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1356,8 +1301,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1382,8 +1326,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1425,8 +1368,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1451,8 +1393,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1495,8 +1436,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1521,8 +1461,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1563,8 +1502,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1589,8 +1527,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1627,8 +1564,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1653,8 +1589,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1692,8 +1627,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1718,8 +1652,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1757,8 +1690,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1783,8 +1715,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
@@ -1825,8 +1756,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //textfield border
                         enabledBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: .5),
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
                         ),
                         //
                         //after clicking the textfield
@@ -1851,13 +1781,327 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         //focused border
                         focusedBorder: const UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: secondaryColor, width: 1.5),
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
                         ),
                       ),
                     ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.035),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+                    TextFormField(
+                      enabled: false,
+                      //controller
+                      controller: _nomParent,
+                      validator: (value) {
+                        return null;
+                      },
+                      //decoration
+                      keyboardType: TextInputType.number,
+                      cursorColor: secondaryColor,
+                      style: GoogleFonts.montserrat(
+                        height: 2,
+                        color: black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        decorationColor: secondaryColor,
+                      ),
+                      decoration: InputDecoration(
+                        //contentPadding: const EdgeInsets.all(5),
+                        labelText: "Nom parent",
+                        hintText: "Nom parent",
+
+                        //
+                        //before clicking the textfield
+                        //
+                        // label before clicking the texfield
+                        labelStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.042,
+                        ),
+                        //textfield border
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
+                        ),
+                        //
+                        //after clicking the textfield
+                        //
+                        //hint after clicking the textfield
+                        hintStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.038,
+                        ),
+                        //floating label
+                        // floatingLabelStyle: GoogleFonts.raleway(
+                        //   color: secondaryColor,
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: MediaQuery.of(context).size.width * 0.042,
+                        // ),
+                        floatingLabelStyle: GoogleFonts.raleway(
+                          color: black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: MediaQuery.of(context).size.width * 0.046,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //focused border
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+                    TextFormField(
+                      enabled: false,
+                      //controller
+                      controller: _prenomParent,
+                      validator: (value) {
+                        return null;
+                      },
+                      //decoration
+                      keyboardType: TextInputType.number,
+                      cursorColor: secondaryColor,
+                      style: GoogleFonts.montserrat(
+                        height: 2,
+                        color: black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        decorationColor: secondaryColor,
+                      ),
+                      decoration: InputDecoration(
+                        //contentPadding: const EdgeInsets.all(5),
+                        labelText: "Prénom parent",
+                        hintText: "Prénom parent",
+
+                        //
+                        //before clicking the textfield
+                        //
+                        // label before clicking the texfield
+                        labelStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.042,
+                        ),
+                        //textfield border
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
+                        ),
+                        //
+                        //after clicking the textfield
+                        //
+                        //hint after clicking the textfield
+                        hintStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.038,
+                        ),
+                        //floating label
+                        // floatingLabelStyle: GoogleFonts.raleway(
+                        //   color: secondaryColor,
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: MediaQuery.of(context).size.width * 0.042,
+                        // ),
+                        floatingLabelStyle: GoogleFonts.raleway(
+                          color: black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: MediaQuery.of(context).size.width * 0.046,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //focused border
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+                    TextFormField(
+                      enabled: false,
+                      //controller
+                      controller: _addressParent,
+                      validator: (value) {
+                        return null;
+                      },
+                      //decoration
+                      keyboardType: TextInputType.number,
+                      cursorColor: secondaryColor,
+                      style: GoogleFonts.montserrat(
+                        height: 2,
+                        color: black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        decorationColor: secondaryColor,
+                      ),
+                      decoration: InputDecoration(
+                        //contentPadding: const EdgeInsets.all(5),
+                        labelText: "Address parent",
+                        hintText: "Address parent",
+
+                        //
+                        //before clicking the textfield
+                        //
+                        // label before clicking the texfield
+                        labelStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.042,
+                        ),
+                        //textfield border
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
+                        ),
+                        //
+                        //after clicking the textfield
+                        //
+                        //hint after clicking the textfield
+                        hintStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.038,
+                        ),
+                        //floating label
+                        // floatingLabelStyle: GoogleFonts.raleway(
+                        //   color: secondaryColor,
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: MediaQuery.of(context).size.width * 0.042,
+                        // ),
+                        floatingLabelStyle: GoogleFonts.raleway(
+                          color: black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: MediaQuery.of(context).size.width * 0.046,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //focused border
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+                    TextFormField(
+                      enabled: false,
+                      //controller
+                      controller: _telephoneParent,
+                      validator: (value) {
+                        return null;
+                      },
+                      //decoration
+                      keyboardType: TextInputType.number,
+                      cursorColor: secondaryColor,
+                      style: GoogleFonts.montserrat(
+                        height: 2,
+                        color: black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        decorationColor: secondaryColor,
+                      ),
+                      decoration: InputDecoration(
+                        //contentPadding: const EdgeInsets.all(5),
+                        labelText: "Téléphone parent",
+                        hintText: "Téléphone parent",
+
+                        //
+                        //before clicking the textfield
+                        //
+                        // label before clicking the texfield
+                        labelStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.042,
+                        ),
+                        //textfield border
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
+                        ),
+                        //
+                        //after clicking the textfield
+                        //
+                        //hint after clicking the textfield
+                        hintStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.038,
+                        ),
+                        //floating label
+                        // floatingLabelStyle: GoogleFonts.raleway(
+                        //   color: secondaryColor,
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: MediaQuery.of(context).size.width * 0.042,
+                        // ),
+                        floatingLabelStyle: GoogleFonts.raleway(
+                          color: black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: MediaQuery.of(context).size.width * 0.046,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //focused border
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+
+                    TextFormField(
+                      enabled: false,
+                      //controller
+                      controller: _emailParent,
+                      validator: (value) {
+                        return null;
+                      },
+                      //decoration
+                      keyboardType: TextInputType.number,
+                      cursorColor: secondaryColor,
+                      style: GoogleFonts.montserrat(
+                        height: 2,
+                        color: black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        decorationColor: secondaryColor,
+                      ),
+                      decoration: InputDecoration(
+                        //contentPadding: const EdgeInsets.all(5),
+                        labelText: "Email parent",
+                        hintText: "Email parent",
+
+                        //
+                        //before clicking the textfield
+                        //
+                        // label before clicking the texfield
+                        labelStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.042,
+                        ),
+                        //textfield border
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: .5),
+                        ),
+                        //
+                        //after clicking the textfield
+                        //
+                        //hint after clicking the textfield
+                        hintStyle: GoogleFonts.raleway(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w200,
+                          fontSize: MediaQuery.of(context).size.width * 0.038,
+                        ),
+                        //floating label
+                        // floatingLabelStyle: GoogleFonts.raleway(
+                        //   color: secondaryColor,
+                        //   fontWeight: FontWeight.w600,
+                        //   fontSize: MediaQuery.of(context).size.width * 0.042,
+                        // ),
+                        floatingLabelStyle: GoogleFonts.raleway(
+                          color: black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: MediaQuery.of(context).size.width * 0.046,
+                          decoration: TextDecoration.underline,
+                        ),
+                        //focused border
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: secondaryColor, width: 1.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.035),
                     //button modifier profile
                     Center(
                       child: MaterialButton(
@@ -1865,8 +2109,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileUpdateScreen(user: user!),
+                              builder: (context) => ProfileUpdateScreen(user: user!),
                             ),
                           ).then((updatedUser) {
                             if (updatedUser != null) {
@@ -1898,7 +2141,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                     ),
 
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                   ],
                 ),
     );
@@ -2104,8 +2347,6 @@ Widget accountCard(Map<String, dynamic> account, BuildContext context) {
     ),
   );
 }
-
-
 
 MaterialButton confirmButton(BuildContext context) {
   return MaterialButton(

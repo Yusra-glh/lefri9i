@@ -45,10 +45,8 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
       isLoading = true;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Provider.of<EventProvider>(context, listen: false)
-          .fetchCoachEvents();
-      await Provider.of<TrainingProvider>(context, listen: false)
-          .fetchCoachTrainings();
+      await Provider.of<EventProvider>(context, listen: false).fetchCoachEvents();
+      await Provider.of<TrainingProvider>(context, listen: false).fetchCoachTrainings();
       setState(() {
         isLoading = false;
       });
@@ -61,6 +59,12 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
     });
   }
 
+  _onTabTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -68,7 +72,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Événements',
+            'Planification',
             style: GoogleFonts.montserrat(
               color: black,
               fontWeight: FontWeight.w700,
@@ -95,8 +99,20 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                 ),
                 child: Column(
                   children: [
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.048),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.048),
+                    Text(
+                      selectedIndex == 0
+                          ? 'Événements'
+                          : selectedIndex == 1
+                              ? "Entrainements"
+                              : "Calendrier",
+                      style: GoogleFonts.montserrat(
+                        color: black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: MediaQuery.of(context).size.width * 0.047,
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.048),
                     Container(
                       margin: EdgeInsets.only(
                         top: 0,
@@ -104,15 +120,13 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                         right: MediaQuery.of(context).size.width * 0.027,
                         bottom: 0,
                       ),
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.01),
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(35),
                         border: Border.all(color: Colors.grey),
                       ),
                       child: TabBar(
-                        overlayColor:
-                            WidgetStateProperty.all(Colors.transparent),
+                        overlayColor: WidgetStateProperty.all(Colors.transparent),
                         //onTap: _onTabTapped,
                         indicator: BoxDecoration(
                           borderRadius: BorderRadius.circular(35),
@@ -120,6 +134,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                         ),
                         indicatorColor: Colors.black,
                         dividerColor: Colors.transparent,
+                        onTap: _onTabTapped,
                         tabs: [
                           EventTabItemIcon(
                             icon: SvgPicture.asset(
@@ -148,8 +163,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.048),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.048),
                     Expanded(
                       child: TabBarView(
                         children: [
@@ -241,13 +255,11 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                           style: GoogleFonts.montserrat(
                             color: grey,
                             fontWeight: FontWeight.w300,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0315,
+                            fontSize: MediaQuery.of(context).size.width * 0.0315,
                           ),
                         ),
                         TextSpan(
-                          text: formatEventDateTime(
-                              event.date, event.heure ?? "10:00:00"),
+                          text: formatEventDateTime(event.date, event.heure ?? "10:00:00"),
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w400,
@@ -266,8 +278,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                           style: GoogleFonts.montserrat(
                             color: grey,
                             fontWeight: FontWeight.w300,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0315,
+                            fontSize: MediaQuery.of(context).size.width * 0.0315,
                           ),
                         ),
                         TextSpan(
@@ -385,13 +396,11 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                           style: GoogleFonts.montserrat(
                             color: grey,
                             fontWeight: FontWeight.w300,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0315,
+                            fontSize: MediaQuery.of(context).size.width * 0.0315,
                           ),
                         ),
                         TextSpan(
-                          text: formatEventDateTime(
-                              training.date, training.heure ?? "10:00:00"),
+                          text: formatEventDateTime(training.date, training.heure ?? "10:00:00"),
                           style: GoogleFonts.montserrat(
                             color: black,
                             fontWeight: FontWeight.w400,
@@ -410,8 +419,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                           style: GoogleFonts.montserrat(
                             color: grey,
                             fontWeight: FontWeight.w300,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.0315,
+                            fontSize: MediaQuery.of(context).size.width * 0.0315,
                           ),
                         ),
                         TextSpan(
@@ -459,14 +467,11 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
   Widget buildEventCalendar(BuildContext context) {
     return Consumer2<EventProvider, TrainingProvider>(
       builder: (context, eventProvider, trainingProvider, child) {
-        final filteredEventsList = eventProvider.events
-            .where(
-                (event) => isSameDate(DateTime.parse(event.date), selectedDate))
-            .toList();
+        final filteredEventsList =
+            eventProvider.events.where((event) => isSameDate(DateTime.parse(event.date), selectedDate)).toList();
 
         final filteredTrainingsList = trainingProvider.trainings
-            .where((training) =>
-                isSameDate(DateTime.parse(training.date), selectedDate))
+            .where((training) => isSameDate(DateTime.parse(training.date), selectedDate))
             .toList();
 
         final combinedList = [...filteredEventsList, ...filteredTrainingsList];
@@ -494,8 +499,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.096,
                   child: PageView.builder(
-                    controller: PageController(
-                        initialPage: _getWeekNumber(selectedDate)),
+                    controller: PageController(initialPage: _getWeekNumber(selectedDate)),
                     itemBuilder: (context, index) {
                       return WeekView(
                         weekIndex: index,
@@ -523,8 +527,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                               style: GoogleFonts.montserrat(
                                 color: grey,
                                 fontWeight: FontWeight.w400,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.0385,
+                                fontSize: MediaQuery.of(context).size.width * 0.0385,
                               ),
                               textAlign: TextAlign.center,
                             ),

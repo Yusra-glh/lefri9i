@@ -5,6 +5,7 @@ class Training {
   final String date;
   final String? heure;
   final String? terrain;
+  final String? equipe;
   final List<String?>? adherents;
   final List<Attendance?>? attendances;
 
@@ -14,6 +15,7 @@ class Training {
     this.heure,
     this.terrain,
     this.adherents,
+    this.equipe,
     List<Attendance?>? attendances,
   }) : attendances = attendances ?? [];
 
@@ -23,6 +25,7 @@ class Training {
       date: json['date'],
       heure: json['heure'],
       terrain: json['terrain'],
+       equipe: json['equipe'] != null ? json['equipe']['nom'] : null,
       adherents: json['adherents'] != null
           ? List<String>.from(json['adherents'])
           : null,
@@ -33,3 +36,4 @@ class Training {
     );
   }
 }
+

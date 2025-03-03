@@ -3,6 +3,8 @@ import 'package:gark_academy/screens/widgets/Note_expandable_widget.dart';
 import 'package:gark_academy/services/provider/event_provider.dart';
 import 'package:gark_academy/utils/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class UserEvaluationScreen extends StatefulWidget {
@@ -43,6 +45,7 @@ class _UserEvaluationScreenState extends State<UserEvaluationScreen> {
   @override
   Widget build(BuildContext context) {
     final testData = Provider.of<EventProvider>(context).testData;
+    initializeDateFormatting();
 
     return Scaffold(
       appBar: AppBar(
@@ -61,6 +64,32 @@ class _UserEvaluationScreenState extends State<UserEvaluationScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                  SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Date du test: ",
+                      style: GoogleFonts.montserrat(
+                        color: black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                      ),
+                      softWrap: true,
+                    ),
+                    Text(
+                      DateFormat('dd MMMM yyyy à HH:mm', 'fr_FR').format(testData.creationDate),
+                      style: GoogleFonts.montserrat(
+                        color: black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: MediaQuery.of(context).size.width * 0.035,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),

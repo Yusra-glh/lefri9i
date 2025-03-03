@@ -29,14 +29,19 @@ class _EventsScreenState extends State<EventsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<EventProvider>(context, listen: false).fetchAdherantEvents();
-      Provider.of<TrainingProvider>(context, listen: false)
-          .fetchAdherantTrainings();
+      Provider.of<TrainingProvider>(context, listen: false).fetchAdherantTrainings();
     });
   }
 
   void onDaySelected(DateTime date) {
     setState(() {
       selectedDate = date;
+    });
+  }
+
+  _onTabTapped(int index) {
+    setState(() {
+      selectedIndex = index;
     });
   }
 
@@ -47,7 +52,7 @@ class _EventsScreenState extends State<EventsScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Événements',
+            'Planification',
             style: GoogleFonts.montserrat(
               color: black,
               fontWeight: FontWeight.w700,
@@ -69,6 +74,19 @@ class _EventsScreenState extends State<EventsScreen> {
           child: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.048),
+              Text(
+                selectedIndex == 0
+                    ? 'Événements'
+                    : selectedIndex == 1
+                        ? "Entrainements"
+                        : "Calendrier",
+                style: GoogleFonts.montserrat(
+                  color: black,
+                  fontWeight: FontWeight.w700,
+                  fontSize: MediaQuery.of(context).size.width * 0.047,
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.048),
               Container(
                 margin: EdgeInsets.only(
                   top: 0,
@@ -76,8 +94,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   right: MediaQuery.of(context).size.width * 0.027,
                   bottom: 0,
                 ),
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(35),
                   border: Border.all(color: Colors.grey),
@@ -91,6 +108,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   ),
                   indicatorColor: Colors.black,
                   dividerColor: Colors.transparent,
+                  onTap: _onTabTapped,
                   tabs: [
                     EventTabItemIcon(
                       icon: SvgPicture.asset(
@@ -204,8 +222,7 @@ class _EventsScreenState extends State<EventsScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: formatEventDateTime(
-                            event.date, event.heure ?? "10:00:00"),
+                        text: formatEventDateTime(event.date, event.heure ?? "10:00:00"),
                         style: GoogleFonts.montserrat(
                           color: black,
                           fontWeight: FontWeight.w400,
@@ -237,6 +254,110 @@ class _EventsScreenState extends State<EventsScreen> {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.006),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Equipe: ",
+                        style: GoogleFonts.montserrat(
+                          color: grey,
+                          fontWeight: FontWeight.w600,
+                          fontSize: MediaQuery.of(context).size.width * 0.0315,
+                        ),
+                      ),
+                      TextSpan(
+                        text: event.convocationEquipe?.nom ?? "",
+                        style: GoogleFonts.montserrat(
+                          color: black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: MediaQuery.of(context).size.width * 0.036,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.006),
+                Row(
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: event.intrested ?? false ? "Intéressé" : "Non intéressé",
+                            style: GoogleFonts.montserrat(
+                              color: black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: MediaQuery.of(context).size.width * 0.036,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.024),
+                    Provider.of<EventProvider>(context, listen: false).isLoading &&
+                            Provider.of<EventProvider>(context, listen: false).eventInProgress == event.id
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03,
+                            width: MediaQuery.of(context).size.width * 0.06,
+                            child: const CircularProgressIndicator(
+                              color: primaryColor,
+                              strokeWidth: 4,
+                            ),
+                          )
+                        : event.intrested ?? false
+                            ? Row(
+                                spacing: 10,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: MediaQuery.of(context).size.width * 0.06,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Provider.of<EventProvider>(context, listen: false).toggleParticipation(event.id);
+                                    },
+                                    child: Text(
+                                      "Je ne participerai pas",
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: MediaQuery.of(context).size.width * 0.036,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                spacing: 10,
+                                children: [
+                                  Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                    size: MediaQuery.of(context).size.width * 0.06,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Provider.of<EventProvider>(context, listen: false).toggleParticipation(event.id);
+                                    },
+                                    child: Text(
+                                      "Je participerai",
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: MediaQuery.of(context).size.width * 0.036,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              )
+                  ],
                 ),
               ],
             ),
@@ -314,8 +435,7 @@ class _EventsScreenState extends State<EventsScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: formatEventDateTime(
-                            training.date, training.heure ?? "10:00:00"),
+                        text: formatEventDateTime(training.date, training.heure ?? "10:00:00"),
                         style: GoogleFonts.montserrat(
                           color: black,
                           fontWeight: FontWeight.w400,
@@ -348,6 +468,29 @@ class _EventsScreenState extends State<EventsScreen> {
                     ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.006),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Equipe: ",
+                        style: GoogleFonts.montserrat(
+                          color: grey,
+                          fontWeight: FontWeight.w600,
+                          fontSize: MediaQuery.of(context).size.width * 0.0315,
+                        ),
+                      ),
+                      TextSpan(
+                        text: training.equipe,
+                        style: GoogleFonts.montserrat(
+                          color: black,
+                          fontWeight: FontWeight.w400,
+                          fontSize: MediaQuery.of(context).size.width * 0.036,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -359,19 +502,10 @@ class _EventsScreenState extends State<EventsScreen> {
   // Calendar
 
   Widget buildEventCalendar(BuildContext context) {
-    return Consumer2<EventProvider, TrainingProvider>(
-      builder: (context, eventProvider, trainingProvider, child) {
-        final filteredEventsList = eventProvider.events
-            .where(
-                (event) => isSameDate(DateTime.parse(event.date), selectedDate))
-            .toList();
-
-        final filteredTrainingsList = trainingProvider.trainings
-            .where((training) =>
-                isSameDate(DateTime.parse(training.date), selectedDate))
-            .toList();
-
-        final combinedList = [...filteredEventsList, ...filteredTrainingsList];
+    return Consumer<EventProvider>(
+      builder: (context, eventProvider, child) {
+        final filteredEventsList =
+            eventProvider.allEvents.where((event) => isSameDate(DateTime.parse(event.date), selectedDate)).toList();
 
         return Padding(
           padding: EdgeInsets.only(
@@ -396,8 +530,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.096,
                   child: PageView.builder(
-                    controller: PageController(
-                        initialPage: _getWeekNumber(selectedDate)),
+                    controller: PageController(initialPage: _getWeekNumber(selectedDate)),
                     itemBuilder: (context, index) {
                       return WeekView(
                         weekIndex: index,
@@ -418,28 +551,21 @@ class _EventsScreenState extends State<EventsScreen> {
                 SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: combinedList.isEmpty
+                    child: filteredEventsList.isEmpty
                         ? Center(
                             child: Text(
                               'Aucun événement ou entrainement prévus pour ce jour.',
                               style: GoogleFonts.montserrat(
                                 color: grey,
                                 fontWeight: FontWeight.w400,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.0385,
+                                fontSize: MediaQuery.of(context).size.width * 0.0385,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           )
                         : Column(
-                            children: combinedList.map((item) {
-                              if (item is Event) {
-                                return eventCard(item);
-                              } else if (item is Training) {
-                                return trainingCard(item);
-                              } else {
-                                return Container();
-                              }
+                            children: filteredEventsList.map((item) {
+                              return eventCard(item);
                             }).toList(),
                           ),
                   ),
