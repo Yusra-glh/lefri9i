@@ -34,6 +34,8 @@
 	<string>Allow access to microphone for video recording to share notes with other users</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to photo library to be able to upload your profile picture</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+  	<string>Allow saving event photos to your library.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

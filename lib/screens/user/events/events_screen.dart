@@ -285,7 +285,7 @@ class _EventsScreenState extends State<EventsScreen> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: event.intrested ?? false ? "Intéressé" : "Non intéressé",
+                            text: "Je participerai : ",
                             style: GoogleFonts.montserrat(
                               color: black,
                               fontWeight: FontWeight.w400,
@@ -296,67 +296,31 @@ class _EventsScreenState extends State<EventsScreen> {
                       ),
                     ),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.024),
-                    Provider.of<EventProvider>(context, listen: false).isLoading &&
-                            Provider.of<EventProvider>(context, listen: false).eventInProgress == event.id
-                        ? SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.03,
-                            width: MediaQuery.of(context).size.width * 0.06,
-                            child: const CircularProgressIndicator(
-                              color: primaryColor,
-                              strokeWidth: 4,
-                            ),
-                          )
-                        : event.intrested ?? false
-                            ? Row(
-                                spacing: 10,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                    size: MediaQuery.of(context).size.width * 0.06,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Provider.of<EventProvider>(context, listen: false).toggleParticipation(event.id);
-                                    },
-                                    child: Text(
-                                      "Je ne participerai pas",
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: MediaQuery.of(context).size.width * 0.036,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                spacing: 10,
-                                children: [
-                                  Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                    size: MediaQuery.of(context).size.width * 0.06,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Provider.of<EventProvider>(context, listen: false).toggleParticipation(event.id);
-                                    },
-                                    child: Text(
-                                      "Je participerai",
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: MediaQuery.of(context).size.width * 0.036,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              )
+                    if (Provider.of<EventProvider>(context, listen: false).isLoading &&
+                        Provider.of<EventProvider>(context, listen: false).eventInProgress == event.id)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.03,
+                          width: MediaQuery.of(context).size.width * 0.06,
+                          child: const CircularProgressIndicator(
+                            color: primaryColor,
+                            strokeWidth: 4,
+                          ),
+                        ),
+                      )
+                    else
+                      Transform.scale(
+                        scale: 0.8,
+                        child: Switch(
+                          value: event.intrested ?? false,
+                          onChanged: (value) {
+                            if (!Provider.of<EventProvider>(context, listen: false).isLoading) {
+                              Provider.of<EventProvider>(context, listen: false).toggleParticipation(event.id);
+                            }
+                          },
+                        ),
+                      ),
                   ],
                 ),
               ],
