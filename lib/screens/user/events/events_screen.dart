@@ -128,7 +128,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     ),
                     EventTabItemIcon(
                       icon: SvgPicture.asset(
-                        "assets/icones/calendar.svg",
+                        "assets/icones/calendarEvent.svg",
                         color: Colors.grey,
                         width: MediaQuery.of(context).size.width * 0.07,
                       ),

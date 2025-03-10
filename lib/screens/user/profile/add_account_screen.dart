@@ -46,6 +46,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       final notifProvider =
           Provider.of<NotificationProvider>(context, listen: false);
       final fcmToken = await notifProvider.getFcmToken();
+      final deviceId =  await notifProvider.getDeviceId();
 
       final AuthService authService = AuthService();
       final response = await authService.registerAdherant(
@@ -55,7 +56,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           telephone: telephone,
           password: password,
           teamCode: teamCode,
-          fcmToken: fcmToken ?? "");
+          fcmToken: fcmToken ?? "",
+          deviceId: deviceId ?? ""
+          );
 
       if (response.statusCode == 200) {
         const SnackBar(

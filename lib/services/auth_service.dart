@@ -28,7 +28,9 @@ class AuthService {
       required String password,
       required String telephone,
       required String teamCode,
-      required String fcmToken}) async {
+      required String fcmToken,
+      required String? deviceId
+      }) async {
     const url = '$baseUrl/auth/register/member';
 
     try {
@@ -127,7 +129,7 @@ class AuthService {
 
   // Login function
   Future<Response> loginUser(
-      String email, String password, String? fcmToken) async {
+      String email, String password, String? fcmToken, String? deviceId) async {
     const url = '$baseUrl/auth/authenticate';
     log("------------------fcm token to send $fcmToken");
     try {
@@ -139,7 +141,7 @@ class AuthService {
           },
         ),
         data: jsonEncode(
-            {'email': email, 'password': password, 'fcmToken': fcmToken}),
+            {'email': email, 'password': password, 'fcmToken': fcmToken, 'deviceId': deviceId}),
       );
 
       if (response.statusCode == 200) {

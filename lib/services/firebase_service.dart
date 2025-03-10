@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:android_id/android_id.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -49,6 +51,7 @@ class PushNotificationService {
     log("Updating FCM token: $token");
     const url = '$baseUrl/user/refreshFCM';
     String? accessToken = await _authService.getAccessTokenFromStorage();
+    String? deviceId = await getDeviceId();
     if (accessToken == null) {
       throw Exception('Access token not available');
     }
@@ -56,7 +59,10 @@ class PushNotificationService {
         options: Options(
           headers: {'Authorization': 'Bearer $accessToken'},
         ),
-        data: token);
+        data: {
+          'fcmToken': token,
+          'deviceId' : deviceId ?? ""
+        });
 
     if (response.statusCode == 200) {
       log("-----------------Response from updateFCMToken = ${response.data}");
@@ -225,4 +231,20 @@ class PushNotificationService {
       importance: Importance.max,
     );
   }
+
+  Future<String?> getDeviceId() async {
+    if (Platform.isIOS) {
+      var deviceInfo = DeviceInfoPlugin();
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      print("DeviceID == ${iosDeviceInfo.identifierForVendor}");
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      const androidIdPlugin = AndroidId();
+      final pluginDeviceId = await androidIdPlugin.getId();
+      print("DeviceID == ${pluginDeviceId}"); // unique ID on Android
+      return pluginDeviceId;
+    }
+    return null;
+  }
+  
 }

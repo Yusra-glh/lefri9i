@@ -176,12 +176,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   login(String email, String password) async {
     final notifProvider = Provider.of<NotificationProvider>(context, listen: false);
     final fcmToken = await notifProvider.getFcmToken();
+    final deviceId = await notifProvider.getDeviceId();
     // // Clear previous notifications
     // Provider.of<NotificationProvider>(context, listen: false)
     //     .clearNotifications();
     log('-----------------fcm token: $fcmToken');
 
-    final response = await _authService.loginUser(email, password, fcmToken);
+    final response = await _authService.loginUser(email, password, fcmToken, deviceId);
 
     if (response.statusCode == 200) {
       // Redirect based on user role

@@ -154,7 +154,7 @@ class _CoachEventsScreenState extends State<CoachEventsScreen> {
                           ),
                           EventTabItemIcon(
                             icon: SvgPicture.asset(
-                              "assets/icones/calendar.svg",
+                              "assets/icones/calendarEvent.svg",
                               color: Colors.grey,
                               width: MediaQuery.of(context).size.width * 0.07,
                             ),

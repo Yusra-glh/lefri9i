@@ -15,7 +15,7 @@ import 'package:gark_academy/services/provider/member_provider.dart';
 import 'package:gark_academy/services/utilities/functions.dart';
 import 'package:gark_academy/utils/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_slider.dart'as cs;
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,8 +54,7 @@ class _HomePageState extends State<HomePage> {
 
   void _getFCMToken() async {
     try {
-      final notifProvider =
-          Provider.of<NotificationProvider>(context, listen: false);
+      final notifProvider = Provider.of<NotificationProvider>(context, listen: false);
       await notifProvider.getFcmToken();
     } catch (e) {
       // ignore: avoid_print
@@ -80,25 +79,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _fetchPostData() async {
-    await Provider.of<PostProvider>(context, listen: false)
-        .fetchAdherantPosts();
+    await Provider.of<PostProvider>(context, listen: false).fetchAdherantPosts();
     final postProvider = Provider.of<PostProvider>(context, listen: false);
     setState(() {
-      carouselPosts = postProvider.posts
-          .where((post) => post.category == 'Football')
-          .toList();
-      secondPosts = postProvider.posts
-          .where((post) => post.category == 'Basketball')
-          .toList();
+      carouselPosts = postProvider.posts.where((post) => post.category == 'Football').toList();
+      secondPosts = postProvider.posts.where((post) => post.category == 'Basketball').toList();
       if (postProvider.posts.length < maxPosts2) {
         setState(() {
           maxPosts2 = postProvider.posts.length;
         });
       }
-      thirdPosts = postProvider.posts
-          .where((post) =>
-              post.category != 'Football' && post.category != 'Basketball')
-          .toList();
+      thirdPosts =
+          postProvider.posts.where((post) => post.category != 'Football' && post.category != 'Basketball').toList();
     });
   }
 
@@ -140,24 +132,18 @@ class _HomePageState extends State<HomePage> {
                     )
                   : Column(
                       children: [
-                        buildTopPart(context, user!.firstname, user!.photo,
-                            user!.lastname),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.048),
+                        buildTopPart(context, user!.firstname, user!.photo, user!.lastname),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.048),
                         sectionTitle(context, "Actualité"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.024),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.024),
                         firstSection(context),
 
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.048),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.048),
                         sectionTitle(context, "Découvrir"),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.024),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.024),
                         actualitePosts(context),
 
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.1),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                         // SizedBox(
                         //     height: MediaQuery.of(context).size.height * 0.048),
                         // sectionTitle(context, "Basketball"),
@@ -179,8 +165,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buildTopPart(
-      BuildContext context, String firstname, String? photo, String lastname) {
+  Widget buildTopPart(BuildContext context, String firstname, String? photo, String lastname) {
     return Padding(
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).size.width * 0.052,
@@ -201,8 +186,7 @@ class _HomePageState extends State<HomePage> {
                   child: CachedNetworkImage(
                     imageUrl: photo ??
                         'https://ui-avatars.com/api/?name=${user?.firstname}+${user?.lastname}&uppercase=true&color=ffffff&background=000000&rounded=true&size=512',
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(
+                    placeholder: (context, url) => const CircularProgressIndicator(
                       color: black,
                     ),
                     errorWidget: (context, url, error) => const Icon(
@@ -250,8 +234,7 @@ class _HomePageState extends State<HomePage> {
                   child: CachedNetworkImage(
                     imageUrl: academyLogo ??
                         'https://thumbs.dreamstime.com/b/academy-logo-element-vector-illustration-decorative-design-191487693.jpg',
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(
+                    placeholder: (context, url) => const CircularProgressIndicator(
                       color: black,
                     ),
                     errorWidget: (context, url, error) => const Icon(
@@ -277,8 +260,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Consumer<NotificationProvider>(
                       builder: (context, notificationProvider, child) {
-                        final unseenCount =
-                            notificationProvider.unseenNotificationCount;
+                        final unseenCount = notificationProvider.unseenNotificationCount;
                         return unseenCount > 0
                             ? Positioned(
                                 top: 0,
@@ -286,12 +268,8 @@ class _HomePageState extends State<HomePage> {
                                 child: Stack(
                                   children: [
                                     Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.018,
-                                      width:
-                                          MediaQuery.of(context).size.height *
-                                              0.018,
+                                      height: MediaQuery.of(context).size.height * 0.018,
+                                      width: MediaQuery.of(context).size.height * 0.018,
                                       decoration: const BoxDecoration(
                                         color: Colors.red,
                                         shape: BoxShape.circle,
@@ -302,10 +280,7 @@ class _HomePageState extends State<HomePage> {
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.02,
+                                            fontSize: MediaQuery.of(context).size.width * 0.02,
                                           ),
                                         ),
                                       ),
@@ -313,8 +288,7 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               )
-                            : const SizedBox
-                                .shrink(); //if no unseen notifications
+                            : const SizedBox.shrink(); //if no unseen notifications
                       },
                     ),
                   ],
@@ -452,8 +426,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         clipBehavior: Clip.hardEdge,
-        margin: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.025),
+        margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.025),
         width: double.infinity,
         child: Stack(
           children: [
@@ -521,8 +494,7 @@ class _HomePageState extends State<HomePage> {
                           fontSize: MediaQuery.of(context).size.width * 0.042,
                         ),
                       ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Text(
@@ -537,8 +509,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -548,8 +519,7 @@ class _HomePageState extends State<HomePage> {
                             style: GoogleFonts.montserrat(
                               color: Colors.white,
                               fontWeight: FontWeight.w300,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.0315,
+                              fontSize: MediaQuery.of(context).size.width * 0.0315,
                             ),
                           ),
                           SvgPicture.asset(
@@ -603,8 +573,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         child: ListTile(
-          contentPadding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.025),
+          contentPadding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.025),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Image.network(
@@ -688,8 +657,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final int postsCount = secondPosts.length;
-    final int displayedPostsCount =
-        (postsCount < maxPosts2) ? postsCount : maxPosts2;
+    final int displayedPostsCount = (postsCount < maxPosts2) ? postsCount : maxPosts2;
     return Padding(
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).size.width * 0.052,
@@ -703,8 +671,7 @@ class _HomePageState extends State<HomePage> {
             Column(
               children: [
                 secondSectionCard(context, secondPosts[i]),
-                if (i != secondPosts.length - 1)
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.024),
+                if (i != secondPosts.length - 1) SizedBox(height: MediaQuery.of(context).size.height * 0.024),
               ],
             ),
         ],
@@ -827,8 +794,7 @@ class _HomePageState extends State<HomePage> {
       height: MediaQuery.of(context).size.height * 0.2,
       child: ListView.separated(
         itemCount: thirdPosts.length,
-        separatorBuilder: (context, index) =>
-            SizedBox(width: MediaQuery.of(context).size.width * 0),
+        separatorBuilder: (context, index) => SizedBox(width: MediaQuery.of(context).size.width * 0),
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           final thirdPost = thirdPosts[index];
@@ -840,8 +806,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget thirdSectionCard(BuildContext context, Post post, bool isLast) {
-    final rightMargin =
-        isLast ? MediaQuery.of(context).size.width * 0.052 : 0.0;
+    final rightMargin = isLast ? MediaQuery.of(context).size.width * 0.052 : 0.0;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -929,8 +894,7 @@ class _HomePageState extends State<HomePage> {
                         fontSize: MediaQuery.of(context).size.width * 0.026,
                       ),
                     ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.015),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   ],
                 ),
               ),

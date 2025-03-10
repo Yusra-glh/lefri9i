@@ -66,6 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       log("---------------notifProvider:  ");
       final fcmToken = await notifProvider.getFcmToken();
       log("---------------fcmToken:  $fcmToken");
+      final deviceId =  await notifProvider.getDeviceId();
 
       final AuthService authService = AuthService();
       final response = await authService.registerAdherant(
@@ -75,7 +76,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           telephone: telephone,
           password: password,
           teamCode: teamCode,
-          fcmToken: fcmToken ?? "");
+          fcmToken: fcmToken ?? "", 
+          deviceId: deviceId ?? ""
+          );
 
       if (response.statusCode == 200) {
         const SnackBar(

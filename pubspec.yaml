@@ -67,6 +67,8 @@ dependencies:
   upgrader: ^10.3.0
   mime: ^1.0.6
   cloudinary_public: ^0.23.1
+  device_info_plus: ^9.1.1
+  android_id: ^0.3.6
 
 dev_dependencies:
   flutter_test:

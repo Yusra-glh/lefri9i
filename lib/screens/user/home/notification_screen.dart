@@ -6,8 +6,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+
+   @override
+  void initState() {
+    Provider.of<NotificationProvider>(context, listen: false).getAllNotif();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +38,12 @@ class NotificationScreen extends StatelessWidget {
       body: Consumer<NotificationProvider>(
         builder: (context, notificationProvider, child) {
           final notifications = notificationProvider.notifications;
+
+            if (notificationProvider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
           if (notifications.isEmpty) {
             return const Center(

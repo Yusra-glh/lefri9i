@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:android_id/android_id.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gark_academy/models/notification_model.dart';
@@ -24,6 +26,8 @@ class NotificationProvider with ChangeNotifier {
   bool _isReconnecting = false;
   final firebaseMessaging = FirebaseMessaging.instance;
   List<NotificationModel> get notifications => _notifications;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   void connectWebSocket(String email) {
     _channel = WebSocketChannel.connect(
@@ -40,9 +44,7 @@ class NotificationProvider with ChangeNotifier {
       try {
         print('Received data: $data');
         List<dynamic> notificationsJson = json.decode(data);
-        _notifications = notificationsJson
-            .map((json) => NotificationModel.fromJson(json))
-            .toList();
+        _notifications = notificationsJson.map((json) => NotificationModel.fromJson(json)).toList();
         notifyListeners();
       } catch (e) {
         print('Error processing data: $e');
@@ -72,6 +74,58 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getAllNotif() async {
+    _isLoading = true;
+    const url = '$baseUrl/notification';
+    try {
+      String? accessToken = await getAccessTokenFromStorage();
+      final response = await _dio.get(
+        url,
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> notificationsJson = response.data;
+        _notifications = notificationsJson
+            .map((json) => NotificationModel.fromJson(json))
+            .where(
+                (notification) => notification.creationDate.isAfter(DateTime.now().subtract(const Duration(days: 30))))
+            .toList();
+        _isLoading = false;
+        notifyListeners();
+      } else {
+        _isLoading = false;
+        notifyListeners();
+        print('Failed to fetch notifications');
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Error fetching notifications: $e');
+    }
+  }
+
+  Future<String?> getDeviceId() async {
+    try {
+      if (Platform.isIOS) {
+        var deviceInfo = DeviceInfoPlugin();
+        var iosDeviceInfo = await deviceInfo.iosInfo;
+        print("DeviceID == ${iosDeviceInfo.identifierForVendor}");
+        return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      } else if (Platform.isAndroid) {
+        const androidIdPlugin = AndroidId();
+        final pluginDeviceId = await androidIdPlugin.getId();
+        print("DeviceID == ${pluginDeviceId}"); // unique ID on Android
+        return pluginDeviceId;
+      }
+    } catch (e) {
+      print('Error getting device ID: $e');
+      return null;
+    }
+    return null;
+  }
+
   Future<void> markNotificationAsSeen(int id) async {
     final url = '$baseUrl/notification/seen/$id';
     try {
@@ -83,9 +137,7 @@ class NotificationProvider with ChangeNotifier {
         ),
       );
       if (response.statusCode == 200) {
-        _notifications
-            .firstWhere((notification) => notification.id == id)
-            .markAsViewed();
+        _notifications.firstWhere((notification) => notification.id == id).markAsViewed();
         notifyListeners();
       } else {
         print('Failed to mark notification as seen');
